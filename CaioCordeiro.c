@@ -41,7 +41,6 @@ struct No *criararvore(int info){
     return raiz; 
 }
 struct No *inserir(int info,struct No *arvore){
-    if(info!=-1){
     if(arvore==NULL){
         arvore=criararvore(info);
     }
@@ -55,7 +54,6 @@ struct No *inserir(int info,struct No *arvore){
     }
     atualizarAltura(arvore);
     return arvore;
-    }
 }
 struct No * buscar_no(struct No * arvore,int valor){
     if(arvore==NULL){
@@ -75,30 +73,24 @@ struct No * buscar_no(struct No * arvore,int valor){
 }
 int checkavl(struct No *arvore,int array[100],int n){
     int flag = 0;
-    int x=1;
-    int y=1;
+    int x=0;
+    int y=0;
+    int l=0;
     for(int i=0;i<(n);i++){
         if(array[i]!= -1){
             x = altura(buscar_no(arvore,array[i])->direita);
             y = altura(buscar_no(arvore,array[i])->esquerda);
-            
-            if((x-y)!=0){
-                flag = flag+1;
-                break;
+            l = x-y;
+            if(l>1||l<-1){
+                flag = 1;
             }
-            else{
-                continue;
-            } 
-            }
-    else{
-        continue;
+        }
     }
-    }
-    if(flag>0){
-        printf("\nF");
+    if(flag==1){
+        return 0;
     }
     else{
-        printf("\nT");
+        return 1;
     }
 }
 int main(){
@@ -124,7 +116,18 @@ int main(){
                 array[nint]=node;
             }
         }
-    checkavl(arvore,array,n);
+    if(tint==0){
+        printf("\n");
+    }
+    if(!checkavl(arvore,array,n)){
+        printf("F");
+    }
+    else{
+        printf("T");
+    }
+    if(tint!=t-1){
+        printf("\n");
+    }
     for(int j=0;j<100;j++){
         array[j]=0;
     }
