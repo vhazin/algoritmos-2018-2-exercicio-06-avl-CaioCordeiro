@@ -31,25 +31,31 @@ int atualizarAltura(struct No *no){
     }
     return 0;
 }
-struct No *inserir(int x,struct No * raiz){
-    if(raiz==NULL){
-        raiz = (struct No *) malloc(sizeof(struct No));
-        raiz->info = x;
-        raiz->esquerda = NULL;
-        raiz->direita = NULL;
-        raiz->altura = 1;
+struct No *criararvore(int info){
+    struct No *raiz;
+    raiz = (struct No *) malloc(sizeof(struct No));
+    raiz->info = info;
+    raiz->esquerda = NULL;
+    raiz->direita = NULL;
+    raiz->altura = 1;
+    return raiz; 
+}
+struct No *inserir(int info,struct No *arvore){
+    
+    if(arvore==NULL){
+        arvore=criararvore(info);
+    }
+    else if(info<arvore->info){
+        arvore->esquerda = inserir(info,arvore->esquerda);
+        arvore->esquerda->pai = arvore;
     }
     else{
-        if(x<raiz->info){
-            inserir(x,raiz->esquerda);
-            }
-        else{
-            inserir(x,raiz->direita);
-            }
-        }
-        atualizarAltura(raiz);
-        return raiz;
+        arvore->direita = inserir(info, arvore->direita);
+        arvore->direita->pai = arvore;
     }
+    atualizarAltura(arvore);
+    return arvore;
+}
 struct No * buscar_no(struct No * arvore,int valor){
     if(arvore==NULL){
         return NULL;
@@ -68,22 +74,16 @@ struct No * buscar_no(struct No * arvore,int valor){
 }
 int checkavl(struct No *arvore,int array[100],int n){
     int flag = 0;
-    int x;
-    int y;
-    for(int i=0;i<(n-1);i++){
+    int x=1;
+    int y=1;
+    int dbug;
+    for(int i=0;i<(n);i++){
         if(array[i]!= -1){
-            if((buscar_no(arvore,array[i])->direita)==NULL){
-                x =0;
-            }
-            else{
-                x=(buscar_no(arvore,array[i]))->direita->altura;
-            }
-            if((buscar_no(arvore,array[i])->esquerda)==NULL){
-                y = 0;
-            }
-            else{
-                y=buscar_no(arvore,array[i])->esquerda->altura;
-            }
+            printf("%d",array[i]);
+            dbug = altura(buscar_no(arvore,array[i])->direita);
+            printf(" x->%d ",dbug);
+            // y = altura(buscar_no(arvore,array[i])->esquerda);
+            
             if((x-y)!=0){
                 flag = flag+1;
                 break;
@@ -103,17 +103,25 @@ int checkavl(struct No *arvore,int array[100],int n){
         printf("\nT");
     }
 }
+int inordem(struct No *x){
+    if(x!=NULL){
+        inordem(x->esquerda);
+        printf(" %d",x->info);
+        inordem(x->direita);
+    }
+}
 int main(){
     int t;
     int n;
     int node;
     int tint=0;
     int nint=0;
-    int array[100];
+    int array[101];
     struct No *arvore=NULL;
     scanf("%d",&t);
     for(tint=0;tint<t;tint++){
         scanf("%d",&n);
+        arvore = NULL;
         for(nint=0;nint<n;nint++){
             scanf("%d",&node);
             if(node== -1){
@@ -123,12 +131,12 @@ int main(){
             else{
                 arvore=inserir(node,arvore);
                 array[nint]=node;
+                printf("a");
             }
         }
     checkavl(arvore,array,n);
     for(int j=0;j<100;j++){
         array[j]=0;
     }
-    arvore = NULL;
     }
 }
